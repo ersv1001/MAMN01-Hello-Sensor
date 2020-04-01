@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MAMN01 Individuell</string>
+    <string name="accelerometer">Accelerometer</string>
+    <string name="compass">Compass</string>
+</resources>
