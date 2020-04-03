@@ -8,10 +8,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
 
 public class DisplayAccelerometerActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -20,6 +18,7 @@ public class DisplayAccelerometerActivity extends AppCompatActivity implements S
     private TextView textX;
     private TextView textY;
     private TextView textZ;
+    private TextView textDirection;
     static final float ALPHA = 0.25f;
     float[] gravSensorVals = null;
     float[] magSensorVals = null;
@@ -32,9 +31,9 @@ public class DisplayAccelerometerActivity extends AppCompatActivity implements S
         textX = findViewById(R.id.textX);
         textY = findViewById(R.id.textY);
         textZ = findViewById(R.id.textZ);
+        textDirection = findViewById(R.id.textDirection);
         setTitle("Accelerometer");
 
-        //Log.d(TAG, "onCreate: Initializing Sensor Services");
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(DisplayAccelerometerActivity.this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -49,7 +48,6 @@ public class DisplayAccelerometerActivity extends AppCompatActivity implements S
         if(gravSensorVals == null){
             gravSensorVals = event.values;
         }
-        // Om skillnaden på nya värden är mindre än 10% skriv ej ut
         String x = "X = " + ((int) Math.ceil(gravSensorVals[0]));
         String y = "Y = " + ((int) Math.ceil(gravSensorVals[1]));
         String z = "Z = " + ((int) Math.ceil(gravSensorVals[2]));
@@ -57,7 +55,13 @@ public class DisplayAccelerometerActivity extends AppCompatActivity implements S
         textY.setText(y);
         textZ.setText(z);
 
-        //gravSensorVals = event.values;
+        if((int) Math.ceil(gravSensorVals[0]) == 0){
+            textDirection.setText("Direction: Center");
+        } else if (gravSensorVals[0] > 0){
+            textDirection.setText("Direction: Left");
+        } else {
+            textDirection.setText("Direction: Right");
+        }
 
     }
 
@@ -70,6 +74,7 @@ public class DisplayAccelerometerActivity extends AppCompatActivity implements S
     protected void onPause(){
         super.onPause();
         sensorManager.unregisterListener(this, accelerometer);
+        gravSensorVals = null;
     }
 
     @Override
@@ -78,6 +83,7 @@ public class DisplayAccelerometerActivity extends AppCompatActivity implements S
         sensorManager.registerListener(DisplayAccelerometerActivity.this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    /*
     protected float[] lowPass( float[] input, float[] output ) {
         if ( output == null ) return input;
         for ( int i=0; i<input.length; i++ ) {
@@ -85,4 +91,5 @@ public class DisplayAccelerometerActivity extends AppCompatActivity implements S
         }
         return output;
     }
+     */
 }
